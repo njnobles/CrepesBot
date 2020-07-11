@@ -25,7 +25,7 @@ async def my_background_task():
             #else:
                 #await channel.send(embed=discord.Embed(title='No status updates', color=0x0000ff))
 
-        await asyncio.sleep(12)
+        await asyncio.sleep(60)
 
 @bot.event
 async def on_ready():
