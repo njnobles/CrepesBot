@@ -1,11 +1,17 @@
 import discord
 import asyncio
+import os
 from discord.ext import commands
 from mcstatus import MinecraftServer
 
 from utils.ChannelWatchManager import ChannelManager
 
 channelManager = ChannelManager()
+
+token = None
+if 'CREPESBOT_TOKEN' in os.environ:
+    token = os.environ['CREPESBOT_TOKEN']
+print(token)
 
 bot = commands.Bot(command_prefix=commands.when_mentioned_or('!'))
 
@@ -59,4 +65,4 @@ async def status(ctx):
 
 
 bot.loop.create_task(my_background_task())
-bot.run('NzA5NjEzOTkyNjYxODc2NzM2.XwgK_A.7BtSI51bi-3lAunSxMt_KzlaCfY')
+bot.run(token)
