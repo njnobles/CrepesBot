@@ -11,7 +11,6 @@ channelManager = ChannelManager()
 token = None
 if 'CREPESBOT_TOKEN' in os.environ:
     token = os.environ['CREPESBOT_TOKEN']
-print(token)
 
 bot = commands.Bot(command_prefix=commands.when_mentioned_or('!'))
 
