@@ -32,7 +32,7 @@ class DropBoxManager:
 
         print('-------------------------------------')
         try:
-            self.dbx.files_download('/ServerWatchlist.txt', '.')
+            self.dbx.files_download_to_file('ServerWatchlist.txt', '/ServerWatchlist.txt')
             print('downloaded')
         except Exception as e:
             print(e)
