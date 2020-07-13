@@ -9,7 +9,6 @@ class DropBoxManager:
         self.dbx = None
         self.connected = False
         access_token = os.environ.get('DROPBOX_TOKEN', None)
-        print(access_token)
         if access_token is not None:
             try:
                 self.dbx = dropbox.Dropbox(access_token)
@@ -33,7 +32,7 @@ class DropBoxManager:
 
         print('-------------------------------------')
         try:
-            self.dbx.files_download('/ServerWatchlist.txt')
+            self.dbx.files_download('/ServerWatchlist.txt', '.')
             print('downloaded')
         except Exception as e:
             print(e)
