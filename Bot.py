@@ -6,13 +6,13 @@ from mcstatus import MinecraftServer
 
 from utils.ChannelWatchManager import ChannelManager
 
-channelManager = ChannelManager()
-
 token = None
 if 'CREPESBOT_TOKEN' in os.environ:
     token = os.environ['CREPESBOT_TOKEN']
 
 bot = commands.Bot(command_prefix=commands.when_mentioned_or('!'))
+
+channelManager = ChannelManager()
 
 async def clear_bot_messages(channel):
     msgs = await channel.history(limit=10).flatten()
@@ -47,15 +47,12 @@ async def my_background_task():
 @bot.event
 async def on_ready():
     print('Bot is ready')
+    await channelManager.load(bot)
 
 @bot.command()
 async def shutdown(ctx):
     await ctx.send(embed=discord.Embed(title='Shutting down CrepesBot...', color=0xff00ff))
     await ctx.bot.logout()
-
-@bot.command()
-async def files(ctx):
-    await channelManager.files()
 
 @bot.command()
 async def clear(ctx, *, number):

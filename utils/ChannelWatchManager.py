@@ -2,7 +2,7 @@ import discord
 from mcstatus import MinecraftServer
 import dropbox
 import os
-
+import json
 
 class DropBoxManager:
     def __init__(self):
@@ -18,62 +18,37 @@ class DropBoxManager:
                 print(e)
                 pass
 
-    
-    async def files(self):
-        print('Checking files')
-        if self.dbx is None:
-            print('Dbx not defined...')
-            return
-        resp = self.dbx.files_list_folder('')
-        print(resp)
-        print('-------------------------------------')
-        for entry in resp.entries:
-            print(entry)
+    def upload(self, json_content):
+        with open("ServerWatchlist.txt", "w") as text_file:
+            text_file.write(json_content)
 
-        print('-------------------------------------')
+        with open("ServerWatchlist.txt", "rb") as file_contents:
+            self.dbx.files_upload(file_contents.read(), '/ServerWatchlist.txt')
+        
+    def download(self):
         try:
             self.dbx.files_download_to_file('ServerWatchlist.txt', '/ServerWatchlist.txt')
-            print('downloaded')
-        except Exception as e:
-            print(e)
-
-        # print('-------------------------------------')
-        # try:
-        #     self.dbx.files_download('ServerWatchlist.txt')
-        # except Exception as e:
-        #     print(e)
-
-        # print('-------------------------------------')
-        # try:
-        #     self.dbx.files_download('./ServerWatchlist.txt')
-        # except Exception as e:
-        #     print(e)
-
-        try:
             data = ''
             with open('ServerWatchlist.txt', 'r') as myfile:
                 data = myfile.read()
-            
-            print(data)
-        except:
-            print('No file downloaded...')
+            return data
+        except Exception as e:
+            print(e)
+        return '{}'
 
         
 
 class ChannelManager:
     def __init__(self):
         self.channels = {}
-        print('creating DropBoxManager')
         self.dbx_manager = DropBoxManager()
-
-    async def files(self):
-        await self.dbx_manager.files()
 
     def add_server(self, channel, server):
         if channel not in self.channels:
             self.channels[channel] = Channel(channel)
 
         self.channels[channel].add_server(server)
+        self.save()
 
     def remove_server(self, channel, server):
         if channel in self.channels:
@@ -95,6 +70,31 @@ class ChannelManager:
             return self.channels[channel].get_updated_status_embeds()
         return []
 
+    def get_json(self):
+        content = {}
+        for channel in self.channels:
+            content[channel.id] = self.channels[channel].get_watchlist()
+        return json.dumps(content)
+
+    def save(self):
+        self.dbx_manager.upload(self.get_json())
+
+    async def load(self, bot):
+        print(bot)
+        try:
+            raw_json = self.dbx_manager.download()
+            parsed_json = json.loads(raw_json)
+            for channel_id in parsed_json:
+                print(channel_id)
+                channel = bot.get_channel(int(channel_id))
+                print(channel)
+                watchlist = parsed_json[channel_id]
+                print(watchlist)
+                self.channels[channel] = Channel(channel)
+                for server in watchlist:
+                    self.channels[channel].add_server(server)
+        except Exception as e:
+            print(e)
 
 class Channel:
     def __init__(self, channel):
