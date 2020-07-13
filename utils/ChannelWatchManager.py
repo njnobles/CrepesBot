@@ -53,6 +53,7 @@ class ChannelManager:
     def remove_server(self, channel, server):
         if channel in self.channels:
             self.channels[channel].remove_server(server)
+            self.save()
 
     def get_watchlist(self, channel):
         watchlist = []
