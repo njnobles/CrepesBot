@@ -1,6 +1,37 @@
 import discord
 from mcstatus import MinecraftServer
 
+class ChannelManager:
+    def __init__(self):
+        self.channels = {}
+
+    def add_server(self, channel, server):
+        if channel not in self.channels:
+            self.channels[channel] = Channel(channel)
+
+        self.channels[channel].add_server(server)
+
+    def remove_server(self, channel, server):
+        if channel in self.channels:
+            self.channels[channel].remove_server(server)
+
+    def get_watchlist(self, channel):
+        watchlist = []
+        if channel in self.channels:
+            watchlist = self.channels[channel].get_watchlist()
+        return watchlist
+
+    def get_status_embeds(self, channel):
+        if channel in self.channels:
+            return self.channels[channel].get_status_embeds()
+        return []
+
+    def get_updated_status_embeds(self, channel):
+        if channel in self.channels:
+            return self.channels[channel].get_updated_status_embeds()
+        return []
+
+
 class Channel:
     def __init__(self, channel):
         self.channel = channel
@@ -9,6 +40,22 @@ class Channel:
     def add_server(self, server):
         if server not in self.mc_server_list:
             self.mc_server_list.append(ServerStatus(server))
+
+    def remove_server(self, server):
+        server_to_remove = None
+        for s_status in self.mc_server_list:
+            if s_status.server == server:
+                server_to_remove = s_status
+                break
+
+        if server_to_remove is not None:
+            self.mc_server_list.remove(server_to_remove)
+
+    def get_watchlist(self):
+        watchlist = []
+        for s in self.mc_server_list:
+            watchlist.append(s.server)
+        return watchlist
 
     def get_status_embeds(self):
         embeds = []
@@ -29,25 +76,6 @@ class Channel:
                     embeds.append(em)
         return embeds
 
-class ChannelManager:
-    def __init__(self):
-        self.channels = {}
-
-    def add_server(self, channel, server):
-        if channel not in self.channels:
-            self.channels[channel] = Channel(channel)
-
-        self.channels[channel].add_server(server)
-
-    def get_status_embeds(self, channel):
-        if channel in self.channels:
-            return self.channels[channel].get_status_embeds()
-        return []
-
-    def get_updated_status_embeds(self, channel):
-        if channel in self.channels:
-            return self.channels[channel].get_updated_status_embeds()
-        return []
 
 class ServerStatus:
     def __init__(self, server):
@@ -58,9 +86,6 @@ class ServerStatus:
         self.prev_status = None
 
     def is_status_changed(self):
-        print('status change:')
-        print(self.online != self.prev_online_state)
-
         online_change = (self.online != self.prev_online_state)
 
         status_change = False
@@ -76,8 +101,6 @@ class ServerStatus:
         self.prev_status = self.status
         try:
             mc_server = MinecraftServer.lookup(self.server)
-            print(mc_server.host)
-            print(mc_server.port)
             self.status = mc_server.status()
             self.query = mc_server.query()
             self.online = True
