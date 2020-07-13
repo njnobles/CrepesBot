@@ -23,7 +23,7 @@ class DropBoxManager:
             text_file.write(json_content)
 
         with open("ServerWatchlist.txt", "rb") as file_contents:
-            self.dbx.files_upload(file_contents.read(), '/ServerWatchlist.txt')
+            self.dbx.files_upload(file_contents.read(), '/ServerWatchlist.txt', mode=dropbox.files.WriteMode.overwrite)
         
     def download(self):
         try:
