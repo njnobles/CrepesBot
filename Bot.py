@@ -54,6 +54,10 @@ async def shutdown(ctx):
     await ctx.bot.logout()
 
 @bot.command()
+async def files(ctx):
+    await channelManager.files()
+
+@bot.command()
 async def clear(ctx, *, number):
     try:
         msgs = [] #Empty list to put all the messages in the log

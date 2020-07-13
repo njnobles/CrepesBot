@@ -1,9 +1,74 @@
 import discord
 from mcstatus import MinecraftServer
+import dropbox
+import os
+
+
+class DropBoxManager:
+    def __init__(self):
+        self.dbx = None
+        self.connected = False
+        access_token = os.environ.get('DROPBOX_TOKEN', None)
+        print(access_token)
+        if access_token is not None:
+            try:
+                self.dbx = dropbox.Dropbox(access_token)
+                self.connected = True
+            except Exception as e:
+                print('Error accessing DropBox')
+                print(e)
+                pass
+
+    
+    async def files(self):
+        print('Checking files')
+        if self.dbx is None:
+            print('Dbx not defined...')
+            return
+        resp = self.dbx.files_list_folder('')
+        print(resp)
+        print('-------------------------------------')
+        for entry in resp.entries:
+            print(entry)
+
+        print('-------------------------------------')
+        try:
+            self.dbx.files_download('/ServerWatchlist.txt')
+            print('downloaded')
+        except Exception as e:
+            print(e)
+
+        # print('-------------------------------------')
+        # try:
+        #     self.dbx.files_download('ServerWatchlist.txt')
+        # except Exception as e:
+        #     print(e)
+
+        # print('-------------------------------------')
+        # try:
+        #     self.dbx.files_download('./ServerWatchlist.txt')
+        # except Exception as e:
+        #     print(e)
+
+        try:
+            data = ''
+            with open('ServerWatchlist.txt', 'r') as myfile:
+                data = myfile.read()
+            
+            print(data)
+        except:
+            print('No file downloaded...')
+
+        
 
 class ChannelManager:
     def __init__(self):
         self.channels = {}
+        print('creating DropBoxManager')
+        self.dbx_manager = DropBoxManager()
+
+    async def files(self):
+        await self.dbx_manager.files()
 
     def add_server(self, channel, server):
         if channel not in self.channels:
