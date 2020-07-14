@@ -53,8 +53,6 @@ class ChannelManager:
     def remove_server(self, channel, server):
         if channel in self.channels:
             self.channels[channel].remove_server(server)
-            if len(self.channels[channel].mc_server_list) == 0:
-                self.channels.remove(channel)
             self.save()
 
     def get_watchlist(self, channel):
@@ -76,7 +74,9 @@ class ChannelManager:
     def get_json(self):
         content = {}
         for channel in self.channels:
-            content[channel.id] = self.channels[channel].get_watchlist()
+            watchlist = self.channels[channel].get_watchlist()
+            if len(watchlist) > 0:
+                content[channel.id] = self.channels[channel].get_watchlist()
         return json.dumps(content)
 
     def save(self):
