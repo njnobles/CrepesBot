@@ -50,15 +50,17 @@ async def on_ready():
     await channelManager.load(bot)
 
 @bot.command()
+@commands.has_permissions(administrator=True)
 async def shutdown(ctx):
     await ctx.send(embed=discord.Embed(title='Shutting down CrepesBot...', color=0xff00ff))
     await ctx.bot.logout()
 
 @bot.command()
+@commands.has_permissions(manage_messages=True)
 async def clear(ctx, *, number):
     try:
         msgs = [] #Empty list to put all the messages in the log
-        number = int(number) #Converting the amount of messages to delete to an integer
+        number = int(number) + 1 #Converting the amount of messages to delete to an integer
         msgs = await ctx.channel.history(limit=number).flatten()
         await ctx.channel.delete_messages(msgs)
     except Exception as e:
@@ -84,6 +86,22 @@ async def remove(ctx, *, server):
         print(e)
         await ctx.send(embed=discord.Embed(title=f'Error trying to stop watching: {server}'))
         pass
+
+
+@bot.command()
+async def help(ctx):
+    commands = ['add', 'remove', 'watchlist', 'status', 'clear']
+    em = discord.Embed(title='Watchlist')
+
+    em.add_field(name="!add <server>", value='Add <server> to the watchlist', inline=False)
+    em.add_field(name="!remove <server>", value='Remove <server> from the watchlist', inline=False)
+    em.add_field(name="!watchlist", value='View list of servers being watched', inline=False)
+    em.add_field(name="!status", value='Get status of all servers on the watchlist', inline=False)
+
+    channelManager.remove_server(ctx.channel, server)
+    await ctx.send(embed=discord.Embed(title=f'Stopped Watching: {server}'))
+
+
 
 @bot.command()
 async def watchlist(ctx):
