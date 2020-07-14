@@ -41,7 +41,6 @@ async def my_background_task():
                     #await channel.send(embed=discord.Embed(title='No status updates', color=0x0000ff))
         except Exception as e:
             print(e)
-            pass
 
         await asyncio.sleep(60)
 
@@ -66,7 +65,6 @@ async def clear(ctx, *, number):
         await ctx.channel.delete_messages(msgs)
     except Exception as e:
         print(e)
-        pass
 
 @bot.command()
 async def add(ctx, *, server):
@@ -76,7 +74,6 @@ async def add(ctx, *, server):
     except Exception as e:
         print(e)
         await ctx.send(embed=discord.Embed(title=f'Error trying to watch: {server}'))
-        pass
 
 @bot.command()
 async def remove(ctx, *, server):
@@ -86,8 +83,6 @@ async def remove(ctx, *, server):
     except Exception as e:
         print(e)
         await ctx.send(embed=discord.Embed(title=f'Error trying to stop watching: {server}'))
-        pass
-
 
 @bot.command()
 async def help(ctx):
@@ -99,8 +94,6 @@ async def help(ctx):
     em.add_field(name="!status", value='Get status of all servers on the watchlist', inline=False)
 
     await ctx.send(embed=em)
-
-
 
 @bot.command()
 async def watchlist(ctx):
@@ -119,7 +112,6 @@ async def watchlist(ctx):
     except Exception as e:
         print(e)
         await ctx.send(embed=discord.Embed(title='Error getting watchlist...'))
-        pass
 
 @bot.command()
 async def status(ctx):
@@ -135,7 +127,6 @@ async def status(ctx):
     except Exception as e:
         print(e)
         await ctx.send(embed=discord.Embed(title='Error checking status...'))
-        pass
 
 
 bot.loop.create_task(my_background_task())

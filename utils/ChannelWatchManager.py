@@ -16,16 +16,18 @@ class DropBoxManager:
             except Exception as e:
                 print('Error accessing DropBox')
                 print(e)
-                pass
 
     def upload(self, json_content):
-        with open("ServerWatchlist.txt", "w") as text_file:
-            text_file.write(json_content)
+        try:
+            with open("ServerWatchlist.txt", "w") as text_file:
+                text_file.write(json_content)
 
-        if self.connected:
-            with open("ServerWatchlist.txt", "rb") as file_contents:
-                self.dbx.files_upload(file_contents.read(), '/ServerWatchlist.txt', mode=dropbox.files.WriteMode.overwrite)
-        
+            if self.connected:
+                with open("ServerWatchlist.txt", "rb") as file_contents:
+                    self.dbx.files_upload(file_contents.read(), '/ServerWatchlist.txt', mode=dropbox.files.WriteMode.overwrite)
+        except Exception as e:
+            print(e)
+
     def download(self):
         try:
             if self.connected:
