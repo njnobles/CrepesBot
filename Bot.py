@@ -11,6 +11,7 @@ if 'CREPESBOT_TOKEN' in os.environ:
     token = os.environ['CREPESBOT_TOKEN']
 
 bot = commands.Bot(command_prefix=commands.when_mentioned_or('!'))
+bot.remove_command('help')
 
 channelManager = ChannelManager()
 
@@ -90,16 +91,14 @@ async def remove(ctx, *, server):
 
 @bot.command()
 async def help(ctx):
-    commands = ['add', 'remove', 'watchlist', 'status', 'clear']
-    em = discord.Embed(title='Watchlist')
+    em = discord.Embed(title='Help Commands')
 
     em.add_field(name="!add <server>", value='Add <server> to the watchlist', inline=False)
     em.add_field(name="!remove <server>", value='Remove <server> from the watchlist', inline=False)
     em.add_field(name="!watchlist", value='View list of servers being watched', inline=False)
     em.add_field(name="!status", value='Get status of all servers on the watchlist', inline=False)
 
-    channelManager.remove_server(ctx.channel, server)
-    await ctx.send(embed=discord.Embed(title=f'Stopped Watching: {server}'))
+    await ctx.send(embed=em)
 
 
 

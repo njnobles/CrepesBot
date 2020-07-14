@@ -22,12 +22,14 @@ class DropBoxManager:
         with open("ServerWatchlist.txt", "w") as text_file:
             text_file.write(json_content)
 
-        with open("ServerWatchlist.txt", "rb") as file_contents:
-            self.dbx.files_upload(file_contents.read(), '/ServerWatchlist.txt', mode=dropbox.files.WriteMode.overwrite)
+        if self.connected:
+            with open("ServerWatchlist.txt", "rb") as file_contents:
+                self.dbx.files_upload(file_contents.read(), '/ServerWatchlist.txt', mode=dropbox.files.WriteMode.overwrite)
         
     def download(self):
         try:
-            self.dbx.files_download_to_file('ServerWatchlist.txt', '/ServerWatchlist.txt')
+            if self.connected:
+                self.dbx.files_download_to_file('ServerWatchlist.txt', '/ServerWatchlist.txt')
             data = ''
             with open('ServerWatchlist.txt', 'r') as myfile:
                 data = myfile.read()
