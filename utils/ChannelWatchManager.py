@@ -17,23 +17,23 @@ class DropBoxManager:
                 print('Error accessing DropBox')
                 print(e)
 
-    def upload(self, json_content):
+    def upload(self, filename, json_content):
         try:
-            with open("ServerWatchlist.txt", "w") as text_file:
+            with open(filename, "w") as text_file:
                 text_file.write(json_content)
 
             if self.connected:
-                with open("ServerWatchlist.txt", "rb") as file_contents:
-                    self.dbx.files_upload(file_contents.read(), '/ServerWatchlist.txt', mode=dropbox.files.WriteMode.overwrite)
+                with open(filename, "rb") as file_contents:
+                    self.dbx.files_upload(file_contents.read(), '/' + filename, mode=dropbox.files.WriteMode.overwrite)
         except Exception as e:
             print(e)
 
-    def download(self):
+    def download(self, filename):
         try:
             if self.connected:
-                self.dbx.files_download_to_file('ServerWatchlist.txt', '/ServerWatchlist.txt')
+                self.dbx.files_download_to_file(filename, '/' + filename)
             data = ''
-            with open('ServerWatchlist.txt', 'r') as myfile:
+            with open(filename, 'r') as myfile:
                 data = myfile.read()
             return data
         except Exception as e:
@@ -84,12 +84,12 @@ class ChannelManager:
         return json.dumps(content)
 
     def save(self):
-        self.dbx_manager.upload(self.get_json())
+        self.dbx_manager.upload("ServerWatchlist.txt", self.get_json())
 
     async def load(self, bot):
         print(bot)
         try:
-            raw_json = self.dbx_manager.download()
+            raw_json = self.dbx_manager.download("ServerWatchlist.txt")
             parsed_json = json.loads(raw_json)
             for channel_id in parsed_json:
                 print(channel_id)
@@ -190,7 +190,7 @@ class ServerStatus:
             embed.add_field(name="Status", value="Online", inline=False)
             embed.add_field(name="# Online", value=f"{self.status.players.online}", inline=True)
             embed.add_field(name="Version", value=f"{self.query.software.version}", inline=True)
-            embed.add_field(name="Players Online", value="\n".join(query.players.names))
+            embed.add_field(name="Players Online", value="\n".join(self.query.players.names))
         else:
             embed.add_field(name="Status", value="Offline", inline=False)
             embed.add_field(name="# Online", value=f"0", inline=True)
