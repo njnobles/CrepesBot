@@ -190,7 +190,8 @@ class ServerStatus:
             embed.add_field(name="Status", value="Online", inline=True)
             embed.add_field(name="Version", value=f"{self.query.software.version}", inline=True)
             embed.add_field(name="# Online", value=f"{self.status.players.online}", inline=False)
-            embed.add_field(name="Players Online", value="\n".join(self.query.players.names), inline=False)
+            if(self.status.players.online > 0)
+                embed.add_field(name="Players Online", value="\n".join(self.query.players.names), inline=False)
         else:
             embed.add_field(name="Status", value="Offline", inline=False)
             embed.add_field(name="# Online", value=f"0", inline=True)
