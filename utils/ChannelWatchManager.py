@@ -71,9 +71,12 @@ class ChannelManager:
         return []
 
     def get_updated_status_embeds(self, channel):
+        em = []
         if channel in self.channels:
-            return self.channels[channel].get_updated_status_embeds()
-        return []
+            em = self.channels[channel].get_updated_status_embeds()
+            if self.channels[channel].has_a_server_status_changed():
+                self.save()
+        return em
 
     def get_json(self):
         content = {}
@@ -84,12 +87,12 @@ class ChannelManager:
         return json.dumps(content)
 
     def save(self):
-        self.dbx_manager.upload("ServerWatchlist.txt", self.get_json())
+        self.dbx_manager.upload("ServerWatchlist2.txt", self.get_json())
 
     async def load(self, bot):
         print(bot)
         try:
-            raw_json = self.dbx_manager.download("ServerWatchlist.txt")
+            raw_json = self.dbx_manager.download("ServerWatchlist2.txt")
             parsed_json = json.loads(raw_json)
             for channel_id in parsed_json:
                 print(channel_id)
@@ -99,7 +102,7 @@ class ChannelManager:
                 print(watchlist)
                 self.channels[channel] = Channel(channel)
                 for server in watchlist:
-                    self.channels[channel].add_server(server)
+                    self.channels[channel].add_server(server["server"], server["online"])
         except Exception as e:
             print(e)
 
@@ -108,9 +111,9 @@ class Channel:
         self.channel = channel
         self.mc_server_list = []
 
-    def add_server(self, server):
+    def add_server(self, server, online=False):
         if server not in self.mc_server_list:
-            self.mc_server_list.append(ServerStatus(server))
+            self.mc_server_list.append(ServerStatus(server, online))
 
     def remove_server(self, server):
         server_to_remove = None
@@ -125,7 +128,8 @@ class Channel:
     def get_watchlist(self):
         watchlist = []
         for s in self.mc_server_list:
-            watchlist.append(s.server)
+            server_info = {"server": s.server, "online": s.online}
+            watchlist.append(server_info)
         return watchlist
 
     def get_status_embeds(self):
@@ -147,17 +151,21 @@ class Channel:
                     embeds.append(em)
         return embeds
 
+    def has_a_server_status_changed(self):
+        for server in self.mc_server_list:
+            if server.is_online_status_changed():
+                return True
 
 class ServerStatus:
-    def __init__(self, server):
+    def __init__(self, server, online=False):
         self.server = server
-        self.online = False
+        self.online = online
         self.prev_online_state = False
         self.status = None
         self.prev_status = None
 
     def is_status_changed(self):
-        online_change = (self.online != self.prev_online_state)
+        online_change = self.is_online_status_changed()
 
         status_change = False
         if self.prev_status is None and self.status is not None:
@@ -166,6 +174,9 @@ class ServerStatus:
             status_change = (self.prev_status.players.online != self.status.players.online)
 
         return (online_change or status_change)
+
+    def is_online_status_changed(self):
+        return (self.online != self.prev_online_state)
 
     def update_status(self):
         self.prev_online_state = self.online
