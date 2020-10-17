@@ -173,7 +173,7 @@ class ServerStatus:
         try:
             mc_server = MinecraftServer.lookup(self.server)
             self.status = mc_server.status()
-            self.query = mc_server.query()
+            #self.query = mc_server.query()
             self.online = True
         except:
             self.online = False
@@ -188,10 +188,10 @@ class ServerStatus:
         embed.set_thumbnail(url='https://i.imgur.com/lxtYZIR.gif')
         if(self.online):
             embed.add_field(name="Status", value="Online", inline=True)
-            embed.add_field(name="Version", value=f"{self.query.software.version}", inline=True)
+            #embed.add_field(name="Version", value=f"{self.query.software.version}", inline=True)
             embed.add_field(name="# Online", value=f"{self.status.players.online}", inline=False)
-            if(self.status.players.online > 0):
-                embed.add_field(name="Players Online", value="\n".join(self.query.players.names), inline=False)
+            #if(self.status.players.online > 0):
+                #embed.add_field(name="Players Online", value="\n".join(self.query.players.names), inline=False)
         else:
             embed.add_field(name="Status", value="Offline", inline=False)
             embed.add_field(name="# Online", value=f"0", inline=True)
