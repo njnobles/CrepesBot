@@ -174,7 +174,12 @@ class ServerStatus:
             mc_server = MinecraftServer.lookup(self.server)
             self.status = mc_server.status()
             #self.query = mc_server.query()
-            self.online = True
+            print('o: ' + self.status.players.online)
+            print('m: ' + self.status.max)
+            if self.status.players.online > 0:
+                self.online = True
+            else:
+                self.online = False
         except:
             self.online = False
         
