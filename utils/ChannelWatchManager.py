@@ -176,7 +176,7 @@ class ServerStatus:
             #self.query = mc_server.query()
             print('o: ' + self.status.players.online)
             print('m: ' + self.status.max)
-            if self.status.players.online > 0:
+            if self.status.players.online > 0 and self.status.players.online < 50:
                 self.online = True
             else:
                 self.online = False
