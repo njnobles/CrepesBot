@@ -173,7 +173,7 @@ class ServerStatus:
         aternos_on = False
         try:
             mc_server = MinecraftServer.lookup(self.server)
-            if 'aternos' in self.server and mc_server.host == self.server:
+            if 'aternos' in self.server and mc_server.host != self.server:
                 aternos_on = True
             self.status = mc_server.status()
             #self.query = mc_server.query()
