@@ -170,18 +170,23 @@ class ServerStatus:
     def update_status(self):
         self.prev_online_state = self.online
         self.prev_status = self.status
+        aternos_on = False
         try:
             mc_server = MinecraftServer.lookup(self.server)
+            if 'aternos' in self.server and mc_server.host == self.server:
+                aternos_on = True
             self.status = mc_server.status()
             #self.query = mc_server.query()
             print('o: ' + self.status.players.online)
             print('m: ' + self.status.max)
-            if self.status.players.online > 0 and self.status.players.online < 50:
-                self.online = True
-            else:
-                self.online = False
+            #if self.status.players.online > 0 and self.status.players.online < 50:
+                #self.online = True
+            #else:
+                #self.online = False
         except:
             self.online = False
+        if aternos_on:
+            self.online = True
         
     def get_embed(self):
         if(self.online):
@@ -194,7 +199,8 @@ class ServerStatus:
         if(self.online):
             embed.add_field(name="Status", value="Online", inline=True)
             #embed.add_field(name="Version", value=f"{self.query.software.version}", inline=True)
-            embed.add_field(name="# Online", value=f"{self.status.players.online}", inline=False)
+            if self.status is not None and self.status.players is not None:
+                embed.add_field(name="# Online", value=f"{self.status.players.online}", inline=False)
             #if(self.status.players.online > 0):
                 #embed.add_field(name="Players Online", value="\n".join(self.query.players.names), inline=False)
         else:
