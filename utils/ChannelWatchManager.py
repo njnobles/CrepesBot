@@ -4,7 +4,7 @@ from aternosapi import AternosAPI
 import dropbox
 import os
 import json
-
+import requests
 class DropBoxManager:
     def __init__(self):
         self.dbx = None
@@ -106,11 +106,7 @@ class ChannelManager:
             watchlist = self.channels[channel].get_watchlist()
             aternos = self.channels[channel].get_aternos_server()
             if len(watchlist) > 0 or len(aternos) > 0:
-                #content[channel.id] = self.channels[channel].get_watchlist()
                 content[channel.id] = ChannelPayload(watchlist, aternos)
-                #content[channel.id] = {}
-                #content[channel.id]['watchlist'] = watchlist
-                #content[channel.id]['aternos'] = aternos
         return json.dumps(content, default=lambda o: o.__dict__)
 
     def save(self):
@@ -144,7 +140,12 @@ class ChannelManager:
         except Exception as e:
             print('Error downloadinging ServerWatchlist')
             print(e)
-        
+        print('test login')
+        resp = requests.post(url=f"https://aternos.org/panel/ajax/account/login.php?SEC=0zc2e78xbgo00000:nytbpw1at5p00000", data=arguments, headers=header)
+        print(resp)
+        print(resp.reason)
+        print(resp.text)
+                
 
 
 class Channel:
