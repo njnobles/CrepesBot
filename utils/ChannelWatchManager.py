@@ -162,10 +162,10 @@ class Channel:
             self.aternos_server = server
             api_info = self.aternos_api_info[self.aternos_server]
             print(api_info)
-            print(api_info['headers_cookie'])
+            print(api_info['header_cookie'])
             print(api_info['cookie'])
             print(api_info['asec'])
-            self.aternos_api = AternosAPI(api_info['headers_cookie'], api_info['cookie'], api_info['asec'])
+            self.aternos_api = AternosAPI(api_info['header_cookie'], api_info['cookie'], api_info['asec'])
 
     def get_aternos_server(self):
         return self.aternos_server
