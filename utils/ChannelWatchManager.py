@@ -130,6 +130,7 @@ class ChannelManager:
             print(e)
         try:
             raw_json = self.dbx_manager.download("aternos.json")
+            print(raw_json)
             for channel in self.channels:
                 self.channels[channel].set_aternos_api_info(json.loads(raw_json))
             self.startup_aid = json.loads(raw_json)
