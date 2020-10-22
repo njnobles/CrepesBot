@@ -1,5 +1,6 @@
 import discord
 from mcstatus import MinecraftServer
+from aternosapi import AternosAPI
 import dropbox
 import os
 import json
@@ -40,12 +41,16 @@ class DropBoxManager:
             print(e)
         return '{}'
 
-        
+ class ChannelPayload:
+    def __init__(self, watchlist, aternos):
+        self.watchlist = watchlist
+        self.aternos = aternos
 
 class ChannelManager:
     def __init__(self):
         self.channels = {}
         self.dbx_manager = DropBoxManager()
+        self.startup_aid = {}
 
     def add_server(self, channel, server):
         if channel not in self.channels:
@@ -53,6 +58,22 @@ class ChannelManager:
 
         self.channels[channel].add_server(server)
         self.save()
+
+    def set_aternos_server(self, channel, server):
+        if channel not in self.channels:
+            self.channels[channel] = Channel(channel)
+
+        self.channels[channel].set_aternos_server(server)
+        self.save()
+
+    def get_aternos_server(self, channel):
+        return self.channels[channel].get_aternos_server()
+
+    def start_aternos_server(self, channel):
+        self.channels[channel].start_aternos_server()
+
+    def stop_aternos_server(self, channel):
+        self.channels[channel].stop_aternos_server()
 
     def remove_server(self, channel, server):
         if channel in self.channels:
@@ -79,38 +100,74 @@ class ChannelManager:
         content = {}
         for channel in self.channels:
             watchlist = self.channels[channel].get_watchlist()
-            if len(watchlist) > 0:
-                content[channel.id] = self.channels[channel].get_watchlist()
+            aternos = self.channels[channel].get_aternos_server()
+            if len(watchlist) > 0 or len(aternos) > 0:
+                #content[channel.id] = self.channels[channel].get_watchlist()
+                content[channel.id] = ChannelPayload(watchlist, aternos)
         return json.dumps(content)
 
     def save(self):
-        self.dbx_manager.upload("ServerWatchlist.txt", self.get_json())
+        self.dbx_manager.upload("ServerWatchlist3.txt", self.get_json())
 
     async def load(self, bot):
         print(bot)
         try:
-            raw_json = self.dbx_manager.download("ServerWatchlist.txt")
+            raw_json = self.dbx_manager.download("ServerWatchlist3.txt")
             parsed_json = json.loads(raw_json)
             for channel_id in parsed_json:
                 print(channel_id)
                 channel = bot.get_channel(int(channel_id))
                 print(channel)
-                watchlist = parsed_json[channel_id]
+                watchlist = parsed_json[channel_id]['watchlist']
                 print(watchlist)
                 self.channels[channel] = Channel(channel)
                 for server in watchlist:
                     self.channels[channel].add_server(server)
+                aternos = parsed_json[channel_id]['aternos']
+                print(aternos)
+                self.channels[channel].set_aternos_server(aternos)
         except Exception as e:
             print(e)
+        try:
+            raw_json = self.dbx_manager.download("aternos.json")
+            for channel in self.channels:
+                self.channels[channel].set_aternos_api_info(json.loads(raw_json))
+            self.startup_aid = json.loads(raw_json)
+        except Exception as e:
+            print(e)
+
 
 class Channel:
     def __init__(self, channel):
         self.channel = channel
         self.mc_server_list = []
+        self.aternos_server = ''
+        self.aternos_api = None
+        self.aternos_api_info = None
+
+    def set_aternos_api_info(self, aternos_api_info):
+        self.aternos_api_info = aternos_api_info
 
     def add_server(self, server):
         if server not in self.mc_server_list:
             self.mc_server_list.append(ServerStatus(server))
+    
+    def set_aternos_server(self, server):
+        if aternos_api_info is not None:
+            self.aternos_server = server
+            api_info = aternos_api_info[aternos_server]
+            self.aternos_api = AternosAPI(api_info['headers_cookie'], api_info['cookie'], api_info['asec'])
+
+    def get_aternos_server(self):
+        return self.aternos_server
+
+    def start_aternos_server(self):
+        if self.aternos_api is not None:
+            self.aternos_api.StartServer()
+
+    def stop_aternos_server(self):
+        if self.aternos_api is not None:
+            self.aternos_api.StopServer()
 
     def remove_server(self, server):
         server_to_remove = None

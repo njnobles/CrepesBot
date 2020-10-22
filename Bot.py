@@ -67,6 +67,7 @@ async def clear(ctx, *, number):
         print(e)
 
 @bot.command()
+@commands.has_permissions(administrator=True)
 async def add(ctx, *, server):
     try:
         channelManager.add_server(ctx.channel, server)
@@ -76,6 +77,47 @@ async def add(ctx, *, server):
         await ctx.send(embed=discord.Embed(title=f'Error trying to watch: {server}'))
 
 @bot.command()
+async def set_aternos_server(ctx, *, server):
+    try:
+        channelManager.set_aternos_server(ctx.channel, server)
+        await ctx.send(embed=discord.Embed(title=f'Target Aternos Server Set: {server}'))
+    except Exception as e:
+        print(e)
+        await ctx.send(embed=discord.Embed(title=f'Error trying to set Aternos server: {server}'))
+
+@bot.command()
+async def get_aternos_server(ctx):
+    try:
+        server = channelManager.get_aternos_server(ctx.channel)
+        await ctx.send(embed=discord.Embed(title=f'Aternos Server: {server}'))
+    except Exception as e:
+        print(e)
+        await ctx.send(embed=discord.Embed(title=f'Error trying to get Aternos server: {server}'))
+
+@bot.command()
+async def start(ctx):
+    try:
+        await ctx.send(embed=discord.Embed(title=f'Starting server...'))
+        channelManager.start_aternos_server(ctx.channel)
+        await ctx.send(embed=discord.Embed(title=f'Server started.'))
+    except Exception as e:
+        print(e)
+        await ctx.send(embed=discord.Embed(title=f'Error trying to start server.'))
+
+@bot.command()
+async def stop(ctx):
+    try:
+        await ctx.send(embed=discord.Embed(title=f'Stopping server...'))
+        channelManager.stop_aternos_server(ctx.channel)
+        await ctx.send(embed=discord.Embed(title=f'Server stopped.'))
+    except Exception as e:
+        print(e)
+        await ctx.send(embed=discord.Embed(title=f'Error trying to stop server.'))
+
+
+
+@bot.command()
+@commands.has_permissions(administrator=True)
 async def remove(ctx, *, server):
     try:
         channelManager.remove_server(ctx.channel, server)
@@ -85,6 +127,7 @@ async def remove(ctx, *, server):
         await ctx.send(embed=discord.Embed(title=f'Error trying to stop watching: {server}'))
 
 @bot.command()
+@commands.has_permissions(administrator=True)
 async def help(ctx):
     em = discord.Embed(title='Help Commands')
 
@@ -96,6 +139,7 @@ async def help(ctx):
     await ctx.send(embed=em)
 
 @bot.command()
+@commands.has_permissions(administrator=True)
 async def watchlist(ctx):
     try:
         watchlist = channelManager.get_watchlist(ctx.channel)
@@ -114,6 +158,7 @@ async def watchlist(ctx):
         await ctx.send(embed=discord.Embed(title='Error getting watchlist...'))
 
 @bot.command()
+@commands.has_permissions(administrator=True)
 async def status(ctx):
     try:
         await ctx.send(embed=discord.Embed(title='Checking status...'))
