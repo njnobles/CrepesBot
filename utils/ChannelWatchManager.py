@@ -140,7 +140,11 @@ class ChannelManager:
         except Exception as e:
             print('Error downloadinging ServerWatchlist')
             print(e)
+        
         print('test login')
+        arguments = {"user": "test", "password": "098f6bcd4621d373cade4e832627b4f6"}
+        print(arguments)
+        header = { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36", "Cookie": "ATERNOS_SEC_0zc2e78xbgo00000=nytbpw1at5p00000; __cfduid=d530f2a278f10bc9772809555ae71a7151603394544; _ga=GA1.2.465278585.1603394547; _gid=GA1.2.2026183107.1603394547; PHPSESSID=3i3gea4lp65doc5odjhp1nt8k5; ATERNOS_STYLE=default; __gads=ID=e3b35e1d0c1f057b-22698d1942b800b0:T=1603394653:S=ALNI_MaOvMGphYHildKpP6wBNNG14xEbRg; id5id.1st_364_nb=1; cto_bidid=WdrDIl9qZUh4QlRGOEtxVHJRRFJXanAlMkJFcURjUTdEaUFzcXZkbHdyVlE1TDVQJTJGV0J2c1M3N214ZlFUejZYSHdvSnhFODQycHdvV0hBVVhhcCUyQmdkTkZyQWhDdyUzRCUzRA; cto_bundle=NHIpz196YURDc0ZzUmQzVTFON2RNRU5ZUlQwcnBEeUQ5UUNsYkY0MWRIJTJCTWZ1YjBSUlNjYiUyQlAyJTJCMXpVTFN6RjJrd1Z6bkVDam9meHA1VnpCS293OUtnU1hGOERFalliNWRQTmFKZFFUc3JhYThyQjVJOUJ4b1c4SXFaZEVrQTU5ME1XTQ" }
         resp = requests.post(url=f"https://aternos.org/panel/ajax/account/login.php?SEC=0zc2e78xbgo00000:nytbpw1at5p00000", data=arguments, headers=header)
         print(resp)
         print(resp.reason)
