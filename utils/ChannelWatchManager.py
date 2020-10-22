@@ -48,9 +48,6 @@ class ChannelPayload:
         self.watchlist = watchlist
         self.aternos = aternos
 
-    def toJson(self):
-        return json.dumps(self, default=lambda o: o.__dict__)
-
 class ChannelManager:
     def __init__(self):
         self.channels = {}
@@ -110,11 +107,11 @@ class ChannelManager:
             aternos = self.channels[channel].get_aternos_server()
             if len(watchlist) > 0 or len(aternos) > 0:
                 #content[channel.id] = self.channels[channel].get_watchlist()
-                #content[channel.id] = ChannelPayload(watchlist, aternos)
-                content[channel.id] = {}
-                content[channel.id]['watchlist'] = watchlist
-                content[channel.id]['aternos'] = aternos
-        return json.dumps(content)
+                content[channel.id] = ChannelPayload(watchlist, aternos)
+                #content[channel.id] = {}
+                #content[channel.id]['watchlist'] = watchlist
+                #content[channel.id]['aternos'] = aternos
+        return json.dumps(content, default=lambda o: o.__dict__)
 
     def save(self):
         print('save')
