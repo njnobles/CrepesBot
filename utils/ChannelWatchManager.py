@@ -46,6 +46,9 @@ class ChannelPayload:
         self.watchlist = watchlist
         self.aternos = aternos
 
+    def toJson(self):
+        return json.dumps(self, default=lambda o: o.__dict__)
+
 class ChannelManager:
     def __init__(self):
         self.channels = {}
