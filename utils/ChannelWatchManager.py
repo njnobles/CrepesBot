@@ -27,6 +27,7 @@ class DropBoxManager:
                 with open(filename, "rb") as file_contents:
                     self.dbx.files_upload(file_contents.read(), '/' + filename, mode=dropbox.files.WriteMode.overwrite)
         except Exception as e:
+            print('Error uploading file: ' + filename)
             print(e)
 
     def download(self, filename):
@@ -38,6 +39,7 @@ class DropBoxManager:
                 data = myfile.read()
             return data
         except Exception as e:
+            print('Error downloading file: ' + filename)
             print(e)
         return '{}'
 
@@ -114,7 +116,9 @@ class ChannelManager:
         return json.dumps(content)
 
     def save(self):
-        self.dbx_manager.upload("ServerWatchlist3.txt", self.get_json())
+        print('save')
+        print(self.get_json())
+        self.dbx_manager.upload("ServerWatchlist.json", self.get_json())
 
     async def load(self, bot):
         print(bot)
@@ -125,7 +129,7 @@ class ChannelManager:
         except Exception as e:
             print('Error getting aternos.json' + str(e))
         try:
-            raw_json = self.dbx_manager.download("ServerWatchlist3.txt")
+            raw_json = self.dbx_manager.download("ServerWatchlist.json")
             parsed_json = json.loads(raw_json)
             for channel_id in parsed_json:
                 print(channel_id)
@@ -141,6 +145,7 @@ class ChannelManager:
                 print(aternos)
                 self.channels[channel].set_aternos_server(aternos)
         except Exception as e:
+            print('Error downloadinging ServerWatchlist')
             print(e)
         
 
@@ -170,7 +175,10 @@ class Channel:
             print(api_info['header_cookie'])
             print(api_info['cookie'])
             print(api_info['asec'])
-            self.aternos_api = AternosAPI(api_info['header_cookie'], api_info['cookie'], api_info['asec'])
+            try:
+                self.aternos_api = AternosAPI(api_info['header_cookie'], api_info['cookie'], api_info['asec'])
+            except Exception as e:
+                print('aternos api error' + str(e))
 
     def get_aternos_server(self):
         return self.aternos_server
