@@ -145,7 +145,9 @@ class ChannelManager:
             print(e)
         
 
-
+        login_page = requests.get(url=f"https://aternos.org/go")
+        print(login_page)
+        print(login_page.text)
 
         print('test login')
         arguments = {"user": "test", "password": "098f6bcd4621d373cade4e832627b4f6"}
