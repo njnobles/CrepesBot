@@ -108,7 +108,9 @@ class ChannelManager:
             aternos = self.channels[channel].get_aternos_server()
             if len(watchlist) > 0 or len(aternos) > 0:
                 #content[channel.id] = self.channels[channel].get_watchlist()
-                content[channel.id] = ChannelPayload(watchlist, aternos)
+                #content[channel.id] = ChannelPayload(watchlist, aternos)
+                content[channel.id]['watchlist'] = watchlist
+                content[channel.id]['aternos'] = aternos
         return json.dumps(content)
 
     def save(self):
