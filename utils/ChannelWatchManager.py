@@ -156,11 +156,11 @@ class Channel:
             self.mc_server_list.append(ServerStatus(server))
     
     def set_aternos_server(self, server):
-        if aternos_api_info is not None and len(server) > 0:
+        if self.aternos_api_info is not None and len(server) > 0:
             print('add server')
             print(server)
             self.aternos_server = server
-            api_info = aternos_api_info[self.aternos_server]
+            api_info = self.aternos_api_info[self.aternos_server]
             print(api_info)
             print(api_info['headers_cookie'])
             print(api_info['cookie'])
