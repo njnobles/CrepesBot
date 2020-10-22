@@ -173,7 +173,7 @@ class AternosAPIHelper:
             self.token = key + ":" + value
             self.cookies = { cookie_key: cookie_value }
             self.headers = { "Cookie": cookie_key + "=" + cookie_value }
-            #self.headers["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36"
+            self.headers["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36"
 
     def __init__(self, url):
         self.a = url
