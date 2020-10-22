@@ -111,13 +111,14 @@ class ChannelManager:
             if len(watchlist) > 0 or len(aternos) > 0:
                 #content[channel.id] = self.channels[channel].get_watchlist()
                 #content[channel.id] = ChannelPayload(watchlist, aternos)
+                content[channel.id] = {}
                 content[channel.id]['watchlist'] = watchlist
                 content[channel.id]['aternos'] = aternos
         return json.dumps(content)
 
     def save(self):
         print('save')
-        print(self.get_json())
+        print('json: ' + self.get_json())
         self.dbx_manager.upload("ServerWatchlist.json", self.get_json())
 
     async def load(self, bot):
