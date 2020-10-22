@@ -125,7 +125,6 @@ class ChannelManager:
         print(bot)
         try:
             raw_json = self.dbx_manager.download("aternos.json")
-            #print(raw_json)
             self.aternos_api_info = json.loads(raw_json)
         except Exception as e:
             print('Error getting aternos.json' + str(e))
@@ -167,15 +166,10 @@ class Channel:
             self.mc_server_list.append(ServerStatus(server))
     
     def set_aternos_server(self, server):
+        print('set server: ' + server)
         if self.aternos_api_info is not None and len(server) > 0:
-            print('add server')
-            print(server)
             self.aternos_server = server
             api_info = self.aternos_api_info[self.aternos_server]
-            print(api_info)
-            print(api_info['header_cookie'])
-            print(api_info['cookie'])
-            print(api_info['asec'])
             try:
                 self.aternos_api = AternosAPI(api_info['header_cookie'], api_info['cookie'], api_info['asec'])
             except Exception as e:
@@ -185,8 +179,14 @@ class Channel:
         return self.aternos_server
 
     def start_aternos_server(self):
-        if self.aternos_api is not None:
-            self.aternos_api.StartServer()
+        try:
+            print('starting')
+            print(self.aternos_api)
+            if self.aternos_api is not None:
+                self.aternos_api.StartServer()
+        except Exception as e:
+            print('error starting: ' + str(e))
+            raise e
 
     def stop_aternos_server(self):
         if self.aternos_api is not None:
