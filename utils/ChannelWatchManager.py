@@ -41,7 +41,7 @@ class DropBoxManager:
             print(e)
         return '{}'
 
- class ChannelPayload:
+class ChannelPayload:
     def __init__(self, watchlist, aternos):
         self.watchlist = watchlist
         self.aternos = aternos
