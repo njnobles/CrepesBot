@@ -115,7 +115,7 @@ class ChannelManager:
         print(bot)
         try:
             raw_json = self.dbx_manager.download("aternos.json")
-            print(raw_json)
+            #print(raw_json)
             self.aternos_api_info = json.loads(raw_json)
         except Exception as e:
             print('Error getting aternos.json' + str(e))
