@@ -50,11 +50,12 @@ class ChannelManager:
     def __init__(self):
         self.channels = {}
         self.dbx_manager = DropBoxManager()
-        self.startup_aid = {}
+        self.aternos_api_info = None
 
     def add_server(self, channel, server):
         if channel not in self.channels:
             self.channels[channel] = Channel(channel)
+            self.channels[channel].set_aternos_api_info(self.aternos_api_info)
 
         self.channels[channel].add_server(server)
         self.save()
@@ -62,6 +63,7 @@ class ChannelManager:
     def set_aternos_server(self, channel, server):
         if channel not in self.channels:
             self.channels[channel] = Channel(channel)
+            self.channels[channel].set_aternos_api_info(self.aternos_api_info)
 
         self.channels[channel].set_aternos_server(server)
         self.save()
@@ -112,6 +114,12 @@ class ChannelManager:
     async def load(self, bot):
         print(bot)
         try:
+            raw_json = self.dbx_manager.download("aternos.json")
+            print(raw_json)
+            self.aternos_api_info = json.loads(raw_json)
+        except Exception as e:
+            print('Error getting aternos.json' + str(e))
+        try:
             raw_json = self.dbx_manager.download("ServerWatchlist3.txt")
             parsed_json = json.loads(raw_json)
             for channel_id in parsed_json:
@@ -121,6 +129,7 @@ class ChannelManager:
                 watchlist = parsed_json[channel_id]['watchlist']
                 print(watchlist)
                 self.channels[channel] = Channel(channel)
+                self.channels[channel].set_aternos_api_info(self.aternos_api_info)
                 for server in watchlist:
                     self.channels[channel].add_server(server)
                 aternos = parsed_json[channel_id]['aternos']
@@ -128,14 +137,7 @@ class ChannelManager:
                 self.channels[channel].set_aternos_server(aternos)
         except Exception as e:
             print(e)
-        try:
-            raw_json = self.dbx_manager.download("aternos.json")
-            print(raw_json)
-            for channel in self.channels:
-                self.channels[channel].set_aternos_api_info(json.loads(raw_json))
-            self.startup_aid = json.loads(raw_json)
-        except Exception as e:
-            print(e)
+        
 
 
 class Channel:
