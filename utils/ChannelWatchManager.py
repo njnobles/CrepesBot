@@ -172,6 +172,7 @@ class Channel:
             api_info = self.aternos_api_info[self.aternos_server]
             try:
                 self.aternos_api = AternosAPI(api_info['header_cookie'], api_info['cookie'], api_info['asec'])
+                print('Check: ' + str(self.aternos_api.CheckVaildInput()))
             except Exception as e:
                 print('aternos api error' + str(e))
 
