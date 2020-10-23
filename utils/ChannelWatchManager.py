@@ -240,6 +240,7 @@ class Channel:
                 headers['Cookie'] = api_info['header_cookie']
                 startserver = requests.get(url=f"https://aternos.org/panel/ajax/start.php?headstart=0&SEC={api_info['asec']}", proxies=proxyDict, cookies=cookies, headers=headers)
                 print(startserver)
+                print(startserver.text)
                 print(startserver.json())
         except Exception as e:
             print('error starting: ' + str(e))
