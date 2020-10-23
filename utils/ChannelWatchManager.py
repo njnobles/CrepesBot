@@ -239,7 +239,8 @@ class Channel:
                 headers['User-Agent'] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) Gecko/20100101 Firefox/72.0"
                 headers['Cookie'] = api_info['header_cookie']
                 startserver = requests.get(url=f"https://aternos.org/panel/ajax/start.php?headstart=0&SEC={api_info['asec']}", proxies=proxyDict, cookies=cookies, headers=headers)
-
+                print(startserver)
+                print(startserver.json())
         except Exception as e:
             print('error starting: ' + str(e))
             raise e
